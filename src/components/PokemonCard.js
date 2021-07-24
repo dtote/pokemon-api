@@ -1,8 +1,8 @@
 import { LitElement, html, css } from "lit-element";
 
 class PokemonCard extends LitElement {
-  constructor() {
-    super();
+  firstUpdated() {
+    this.index = this.getAttribute("index");
     this.getPokemon();
   }
 
@@ -20,22 +20,21 @@ class PokemonCard extends LitElement {
   }
 
   getPokemon() {
-    if (this.index !== undefined) {
-      fetch(`https://pokeapi.co/api/v2/pokemon/${this.getAttribute("index")}`)
-        .then((response) => response.json())
-        .then((data) => {
-          this.order = data.order;
-          this.name = data.name;
-          this.image = data.sprites.front_default;
-          this.type = data.type;
-          this.weight = data.weight;
-          this.height = data.height;
-          this.moves = data.moves;
-          this.index = this.getAttribute("index");
-        })
-        .catch((error) => console.error(error));
-    }
-    // return pokemon;
+    const pokemon = fetch(`https://pokeapi.co/api/v2/pokemon/${this.index}`)
+      .then((response) => response.json())
+      .then((data) => {
+        this.data = data;
+        this.order = data.order;
+        this.name = data.name;
+        this.image = data.sprites.back_default;
+        this.backImage = data.sprites.front_default;
+        this.type = data.type;
+        this.weight = data.weight;
+        this.height = data.height;
+        this.moves = data.moves;
+      })
+      .catch((error) => console.error(error));
+    return pokemon;
   }
 
   static get styles() {
@@ -45,16 +44,11 @@ class PokemonCard extends LitElement {
       padding: 20px;
       margin: auto;
       width: 1400px;
-      height: 400px;
       background-color: grey;
       font-family: Arial, Helvetica, sans-serif;
       font-size: 20px;
       border-radius: 20px;
       margin-bottom: 50px;
-    }
-
-    .pokemon-image {
-      align-self: center;
     }
 
     .pokemon-physical {
